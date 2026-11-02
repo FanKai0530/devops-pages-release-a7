@@ -22,4 +22,5 @@ jobs:
           GITHUB_USERNAME: FanKai0530
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
           EVENT_LIMIT: 8
+          HIDE_DETAILS_ON_PRIVATE_REPOS: true
 
