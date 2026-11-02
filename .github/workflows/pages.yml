@@ -1,0 +1,53 @@
+name: Gated Pages release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      demonstrate_broken_link:
+        description: "Inject a broken local link into the build to demonstrate the release gate"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build_validate:
+    name: Build and validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inject deliberate failure into this run only
+        if: ${{ inputs.demonstrate_broken_link == true }}
+        run: printf '\n[Deliberate broken link](missing-demo-page.html)\n' >> README.md
+      - uses: actions/configure-pages@v5
+      - uses: actions/jekyll-build-pages@v1
+        with:
+          source: .
+          destination: ./_site
+      - name: Validate README markers, rendered activity and local links
+        run: python3 scripts/validate_site.py README.md _site
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy validated site
+    needs: build_validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
