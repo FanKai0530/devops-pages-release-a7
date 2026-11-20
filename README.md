@@ -11,7 +11,6 @@ This is my DevOps A7 GitHub Pages project. The homepage publishes this README th
 5. 🎉 Created a new branch in a private repository
 6. 📝 Committed to in a private repository
 7. 📥 Opened PR in a private repository
-8. 🎉 Created a new branch in a private repository
 <!--END_SECTION:activity-->
 
 ## Course
